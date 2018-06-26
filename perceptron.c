@@ -6,7 +6,7 @@
 
 #define ISIZE 2
 #define WSIZE ( ISIZE + 1 ) // weights + bias
-#define LEARNING_RATE  0.1
+#define LEARNING_RATE  0.6
 #define ITERATIONS     10
 
 typedef int ivector[ ISIZE ];
@@ -18,12 +18,16 @@ void initialize( void )
 {
    // Seed the random number generator
    srand( time( NULL ) );
-
+  
    // Initialize the weights with random values
    for ( int i = 0 ; i < WSIZE ; i++ ) 
    {
-      weights[ i ] = ( ( float ) rand( ) / ( float ) RAND_MAX );
+      float item = ( float ) rand( );
+      weights[ i ] = (  item/ ( float ) RAND_MAX );
+      printf("weights[%d]: %f\n", i,weights[i] );
    }
+   printf("\n");
+
 }
 
 int feedforward( ivector inputs )
@@ -56,13 +60,14 @@ void train( void )
 
       printf( "Iteration %d\n", iterations );
 
+      printf("%ld, %ld\n", sizeof( ivector ),sizeof(float[8]));
       for ( int i = 0 ; i < ( sizeof( test ) / sizeof( ivector ) ) ; i++ )
       {
          desired_output = test[ i ][ 0 ] || test[ i ][ 1 ];
          output = feedforward( test[ i ] );
 
          error = desired_output - output;
-
+	 printf("desired_output: %d, output: %d, error: %d\n", desired_output, output, error);
          printf("%d or %d = %d (%d)\n", test[i][0], test[i][1], output, desired_output );
 
          weights[ 0 ] += ( LEARNING_RATE * ( ( float ) error * ( float )test[ i ][ 0 ] ) );
@@ -72,12 +77,12 @@ void train( void )
          iteration_error += ( error * error );
       }
 
-      printf( "Iteration error %d\n", iteration_error );
+      printf( "Iteration error %d, weights[0]: %f, weights[1]: %f, weights[2]: %f, \n", iteration_error ,weights[0], weights[1], weights[2]);
 
       printf("\n");
 
    } while ( ( iteration_error > 0.0 ) && ( iterations++ < ITERATIONS ) );
-
+//} while(iterations++<=100);
    return;
 }
 
